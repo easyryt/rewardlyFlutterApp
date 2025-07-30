@@ -5,6 +5,7 @@ import 'package:job_review/constant/string_const.dart';
 import 'package:job_review/controller/home_controller.dart';
 import 'package:job_review/screens/home/homeScreen.dart';
 import 'package:job_review/screens/refer_screen.dart';
+import 'package:job_review/screens/setting/setting.dart';
 import 'package:job_review/screens/wallet_screen.dart';
 import 'package:job_review/widget/exit_dialog.dart';
 
@@ -20,7 +21,7 @@ class BottomNavigationBarScreen extends StatelessWidget {
       const HomeScreen(),
       const ReferEarnScreen(),
       WalletScreen(),
-      const SizedBox()
+      const SettingScreen()
     ];
     return WillPopScope(
       onWillPop: () async {

@@ -164,7 +164,9 @@
 // }
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:job_review/constant/color_const.dart';
+import 'package:job_review/controller/auth_controller.dart';
 import 'package:job_review/widget/coin_chart.dart';
 import 'package:job_review/widget/task_list.dart';
 
@@ -176,6 +178,17 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  AuthController authController = Get.put(AuthController());
+  @override
+  void initState() {
+    super.initState();
+    initFunction();
+  }
+
+  initFunction() async {
+    await authController.getEmpProfile();
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
