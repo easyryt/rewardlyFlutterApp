@@ -90,8 +90,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         await authController
                             .updateProfile(data)
                             .then((onValue) {
-                          if (onValue != "") {
-                            Navigator.pop(context);
+                          if (onValue != "" && mounted) {
+                            Get.back();
                           }
                         });
                       },
@@ -136,16 +136,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     ),
                   ),
-                  if (authController.isUpdateProfileLoading.value)
-                    const Positioned(
-                      top: 0,
-                      left: 0,
-                      bottom: 0,
-                      right: 0,
-                      child: Center(
-                        child: CircularProgressIndicator(),
-                      ),
-                    ),
+                  Obx(() {
+                    return (authController.isUpdateProfileLoading.value)
+                        ? const Positioned(
+                            top: 0,
+                            left: 0,
+                            bottom: 0,
+                            right: 0,
+                            child: Center(
+                              child: CircularProgressIndicator(),
+                            ),
+                          )
+                        : SizedBox();
+                  })
                 ],
               );
             },
@@ -185,7 +188,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 child: Center(
                   child: Text(
-                    profile.name.substring(0, 1).toUpperCase(),
+                    (profile.name != null && profile.name != "")
+                        ? profile.name.substring(0, 1).toUpperCase()
+                        : "",
                     style: const TextStyle(
                         fontSize: 40,
                         color: appColor,
@@ -195,7 +200,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               const SizedBox(height: 4),
               Text(
-                profile.name,
+                profile.name ?? "",
                 style: GoogleFonts.poppins(
                   color: whiteColor,
                   fontSize: 24,

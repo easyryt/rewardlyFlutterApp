@@ -32,7 +32,7 @@ class AuthController extends GetxController {
       isLoginLoading.value = false;
       if (response.statusCode == 200 || response.statusCode == 201) {
         var data = response.data;
-        String otp = data['Otp'];
+        String otp = data['otp'];
         print("$otp ............................................");
         return otp;
       } else {

@@ -167,6 +167,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:job_review/constant/color_const.dart';
 import 'package:job_review/controller/auth_controller.dart';
+import 'package:job_review/controller/main_app_controller.dart';
 import 'package:job_review/widget/coin_chart.dart';
 import 'package:job_review/widget/task_list.dart';
 
@@ -178,7 +179,9 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  AuthController authController = Get.put(AuthController());
+  AuthController authController = Get.find();
+  MainApplicationController mainApplicationController = Get.find();
+
   @override
   void initState() {
     super.initState();
@@ -186,7 +189,10 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   initFunction() async {
-    await authController.getEmpProfile();
+    await Future.wait([
+      authController.getEmpProfile(),
+      mainApplicationController.getAllApps()
+    ]);
   }
 
   @override
@@ -202,8 +208,32 @@ class _HomeScreenState extends State<HomeScreen> {
             fit: BoxFit.cover,
           ),
         ),
-        child: SafeArea(
-          child: Padding(
+        child: SafeArea(child: Obx(() {
+          if (mainApplicationController.isAppsLoading.value) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          if (mainApplicationController.allAppsList.isEmpty) {
+            return Center(
+                child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text("Data not available."),
+                const SizedBox(height: 16),
+                TextButton(
+                    onPressed: () {
+                      initFunction();
+                    },
+                    child: const Text(
+                      "Retry",
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                    ))
+              ],
+            ));
+          }
+          return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10.0),
             child: SingleChildScrollView(
               child: Column(children: [
@@ -390,10 +420,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                         fontSize: 12),
                                   ),
                                   SizedBox(width: 8),
-                                  Icon(
-                                    Icons.filter_list,
-                                    color: whiteColor,
-                                    size: 18,
+                                  InkWell(
+                                    child: Icon(
+                                      Icons.filter_list,
+                                      color: whiteColor,
+                                      size: 18,
+                                    ),
                                   )
                                 ],
                               ),
@@ -407,12 +439,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
                 const SizedBox(height: 10),
-                TaskList(),
+                const TaskList(),
                 const SizedBox(height: 10),
               ]),
             ),
-          ),
-        ),
+          );
+        })),
       ),
     );
   }

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:job_review/constant/color_const.dart';
-import 'package:job_review/model/task_model.dart';
+import 'package:job_review/model/get_all_apps_model.dart';
 
 class TaskCard extends StatelessWidget {
-  final TaskModel task;
+  final AllAppsCampaigns task;
 
   const TaskCard({super.key, required this.task});
 
@@ -30,19 +30,19 @@ class TaskCard extends StatelessWidget {
                 width: size.width,
                 margin: const EdgeInsets.only(bottom: 30),
                 decoration: BoxDecoration(
-                    color: task.bgColor,
-                    borderRadius: const BorderRadius.only(
+                    color: appColor.withOpacity(0.5),
+                    borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(20),
                         topRight: Radius.circular(20))),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      task.title,
+                      task.name ?? "",
                       style: const TextStyle(
                           fontWeight: FontWeight.w700, height: 0.75),
                     ),
-                    Text(task.subtitle),
+                    Text(task.status ?? ""),
                   ],
                 ),
               ),
@@ -58,21 +58,28 @@ class TaskCard extends StatelessWidget {
                       ]),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(10),
-                    child: Image.network(
-                      task.imageUrl,
+                    child: Container(
                       height: 60,
                       width: 60,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Container(
-                          height: 60,
-                          width: 60,
-                          decoration: BoxDecoration(
-                              color: task.bgColor,
-                              borderRadius: BorderRadius.circular(10)),
-                        );
-                      },
+                      decoration: BoxDecoration(
+                          color: appColor,
+                          borderRadius: BorderRadius.circular(10)),
                     ),
+                    // child: Image.network(
+                    //   task,
+                    //   height: 60,
+                    //   width: 60,
+                    //   fit: BoxFit.cover,
+                    //   errorBuilder: (context, error, stackTrace) {
+                    //     return Container(
+                    //       height: 60,
+                    //       width: 60,
+                    //       decoration: BoxDecoration(
+                    //           color: appColor,
+                    //           borderRadius: BorderRadius.circular(10)),
+                    //     );
+                    //   },
+                    // ),
                   ),
                 ),
               ),
@@ -104,7 +111,7 @@ class TaskCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  task.action,
+                  "Review & Earn Money",
                   style: const TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
@@ -116,7 +123,7 @@ class TaskCard extends StatelessWidget {
                     const Icon(Icons.monetization_on, color: Colors.amber),
                     const SizedBox(width: 8),
                     Text(
-                      task.reward,
+                      "₹7.00",
                       style: const TextStyle(
                           fontSize: 18.5, fontWeight: FontWeight.w600),
                     ),
