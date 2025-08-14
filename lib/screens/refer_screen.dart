@@ -22,6 +22,7 @@ class _ReferEarnScreenState extends State<ReferEarnScreen> {
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: whiteColor,
       appBar: AppBar(
@@ -52,7 +53,7 @@ class _ReferEarnScreenState extends State<ReferEarnScreen> {
           children: [
             Image.asset(
               'assets/images/refer_back.png',
-              height: 188,
+              width: size.width * 0.83,
               fit: BoxFit.cover,
             ),
             const SizedBox(height: 12),

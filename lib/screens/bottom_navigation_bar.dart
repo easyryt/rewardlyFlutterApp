@@ -54,29 +54,35 @@ class BottomNavigationBarScreen extends StatelessWidget {
                   label: home),
               BottomNavigationBarItem(
                   icon: Image.asset(
-                    "assets/bottom/reffer.png",
+                    controller.currentNavIndex.value == 1
+                        ? "assets/bottom/reffer1.png"
+                        : "assets/bottom/reffer.png",
                     fit: BoxFit.cover,
                     height: 24,
-                    color:
-                        controller.currentNavIndex.value == 1 ? appColor : null,
+                    // color:
+                    //     controller.currentNavIndex.value == 1 ? appColor : null,
                   ),
                   label: refer),
               BottomNavigationBarItem(
                   icon: Image.asset(
-                    "assets/bottom/wallet.png",
+                    controller.currentNavIndex.value == 2
+                        ? "assets/bottom/history1.png"
+                        : "assets/bottom/history.png",
                     fit: BoxFit.cover,
                     height: 24,
-                    color:
-                        controller.currentNavIndex.value == 2 ? appColor : null,
+                    // color:
+                    //     controller.currentNavIndex.value == 2 ? appColor : null,
                   ),
                   label: wallet),
               BottomNavigationBarItem(
                   icon: Image.asset(
-                    "assets/bottom/setting.png",
+                    controller.currentNavIndex.value == 3
+                        ? "assets/bottom/setting1.png"
+                        : "assets/bottom/setting.png",
                     fit: BoxFit.cover,
                     height: 24,
-                    color:
-                        controller.currentNavIndex.value == 3 ? appColor : null,
+                    // color:
+                    //     controller.currentNavIndex.value == 3 ? appColor : null,
                   ),
                   label: setting)
             ],

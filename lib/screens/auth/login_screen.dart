@@ -117,7 +117,7 @@ class _LoginScreenState extends State<LoginScreen> {
           Align(
             alignment: Alignment.bottomCenter,
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 32),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(20),
                 child: BackdropFilter(
@@ -127,9 +127,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 16, vertical: 12),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.1),
+                      color: greyColor.withOpacity(0.12),
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: Colors.white.withOpacity(0.3)),
+                      border: Border.all(color: whiteColor, width: 1.1),
                     ),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
@@ -141,10 +141,11 @@ class _LoginScreenState extends State<LoginScreen> {
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                              color: blackColor,
                             ),
                           ),
                         ),
+                        const SizedBox(height: 4),
                         _buildTextField("Mobile Number", phoneController, false,
                             isNumber: true),
                         if (isOtpSent) const SizedBox(height: 12),
@@ -246,7 +247,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                             vertical: 10),
                                         width: double.infinity,
                                         decoration: BoxDecoration(
-                                          color: Colors.white.withOpacity(0.3),
+                                          color: appColor,
                                           borderRadius:
                                               BorderRadius.circular(20),
                                         ),
@@ -279,7 +280,7 @@ class _LoginScreenState extends State<LoginScreen> {
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.15),
         borderRadius: BorderRadius.circular(30),
-        border: Border.all(color: Colors.white.withOpacity(0.3)),
+        border: Border.all(color: whiteColor),
       ),
       child: TextFormField(
         controller: controller,

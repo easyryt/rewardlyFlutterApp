@@ -103,31 +103,32 @@ class _TaskListState extends State<TaskList> {
                       //         type: task.type!,
                       //       ));
                       // }
-                      if (isInstalled && task.type == "cpi") {
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              backgroundColor: whiteColor,
-                              surfaceTintColor: whiteColor,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10)),
-                              title: const Text('Installed'),
-                              content: Text(
-                                'It seems already installed in your device to claim reward uninstall existing ${task.name} app and  Install again by this install option.',
-                              ),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop(); // Close dialog
-                                  },
-                                  child: const Text('Ok'),
-                                ),
-                              ],
-                            );
-                          },
-                        );
-                      }
+                      ///
+                      // if (isInstalled && task.type == "cpi") {
+                      //   showDialog(
+                      //     context: context,
+                      //     builder: (context) {
+                      //       return AlertDialog(
+                      //         backgroundColor: whiteColor,
+                      //         surfaceTintColor: whiteColor,
+                      //         shape: RoundedRectangleBorder(
+                      //             borderRadius: BorderRadius.circular(10)),
+                      //         title: const Text('Installed'),
+                      //         content: Text(
+                      //           'It seems already installed in your device to claim reward uninstall existing ${task.name} app and  Install again by this install option.',
+                      //         ),
+                      //         actions: [
+                      //           TextButton(
+                      //             onPressed: () {
+                      //               Navigator.of(context).pop(); // Close dialog
+                      //             },
+                      //             child: const Text('Ok'),
+                      //           ),
+                      //         ],
+                      //       );
+                      //     },
+                      //   );
+                      // }
                     },
                     child: TaskCard(
                       task: task,

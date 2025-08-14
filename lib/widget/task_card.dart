@@ -188,41 +188,14 @@ class _TaskCardState extends State<TaskCard> {
                                 //   );
                                 // }
 
-                                if (widget.isInstalled &&
-                                    widget.task.type == "cpi") {
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) {
-                                      return AlertDialog(
-                                        backgroundColor: whiteColor,
-                                        surfaceTintColor: whiteColor,
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10)),
-                                        title: const Text('Installed'),
-                                        content: Text(
-                                          'It seems already installed in your device to claim reward uninstall existing ${widget.task.name} app and  Install again by this install option.',
-                                        ),
-                                        actions: [
-                                          TextButton(
-                                            onPressed: () {
-                                              Navigator.of(context)
-                                                  .pop(); // Close dialog
-                                            },
-                                            child: const Text('Ok'),
-                                          ),
-                                        ],
-                                      );
-                                    },
-                                  );
-                                } else {
-                                  if (widget.task.sId != null &&
-                                      widget.task.type != null) {
-                                    Get.to(() => DetailsScreen(
-                                          appId: widget.task.sId!,
-                                          type: widget.task.type!,
-                                        ));
-                                  }
+                                if (widget.task.sId != null &&
+                                    widget.task.type != null) {
+                                  Get.to(() => DetailsScreen(
+                                        appId: widget.task.sId!,
+                                        type: widget.task.type!,
+                                        isInstalled: widget.isInstalled,
+                                        appName: widget.task.name ?? "",
+                                      ));
                                 }
                               },
                               child: Container(
@@ -244,34 +217,36 @@ class _TaskCardState extends State<TaskCard> {
                                 ),
                                 child: Center(
                                   child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Text(
-                                          widget.task.type == "cpi"
-                                              ? widget.isInstalled
-                                                  ? "Already Installed"
-                                                  : "Apply Now"
-                                              : "Apply Now",
-                                          style: const TextStyle(
+                                      const Text(
+                                          // widget.task.type == "cpi"
+                                          //     ? widget.isInstalled
+                                          //         ? "Already Installed"
+                                          //         : "Apply Now"
+                                          //     :
+                                          "Apply Now",
+                                          style: TextStyle(
                                               fontWeight: FontWeight.w500,
                                               fontSize: 13)),
-                                      if (!widget.isInstalled ||
-                                          widget.task.type != "cpi")
-                                        const Spacer(),
-                                      if (!widget.isInstalled ||
-                                          widget.task.type != "cpi")
-                                        Container(
-                                          width: 44,
-                                          height: 28,
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(20),
-                                            color: appColor,
-                                          ),
-                                          child: const Icon(
-                                              Icons.arrow_forward_outlined,
-                                              color: Colors.white),
+                                      // if (!widget.isInstalled ||
+                                      //     widget.task.type != "cpi")
+                                      //   const Spacer(),
+                                      // if (!widget.isInstalled ||
+                                      //     widget.task.type != "cpi")
+                                      Container(
+                                        width: 44,
+                                        height: 28,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          color: appColor,
                                         ),
+                                        child: const Icon(
+                                            Icons.arrow_forward_outlined,
+                                            color: Colors.white),
+                                      ),
                                     ],
                                   ),
                                 ),

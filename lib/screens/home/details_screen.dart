@@ -12,8 +12,15 @@ import 'package:job_review/widget/app_install_preview_bottom_sheet.dart';
 
 class DetailsScreen extends StatefulWidget {
   final String appId;
+  final String appName;
   final String type;
-  const DetailsScreen({super.key, required this.appId, required this.type});
+  final bool isInstalled;
+  const DetailsScreen(
+      {super.key,
+      required this.appId,
+      required this.type,
+      required this.isInstalled,
+      required this.appName});
 
   @override
   State<DetailsScreen> createState() => _DetailsScreenState();
@@ -432,20 +439,51 @@ class _DetailsScreenState extends State<DetailsScreen> {
                                   ),
                                   child: ElevatedButton(
                                     onPressed: () {
-                                      if (task.packageName != null) {
-                                        showModalBottomSheet(
+                                      if (widget.isInstalled &&
+                                          widget.type == "cpi") {
+                                        showDialog(
                                           context: context,
-                                          isScrollControlled: true,
-                                          backgroundColor: Colors.white,
-                                          shape: const RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.vertical(
-                                                top: Radius.circular(16)),
-                                          ),
-                                          builder: (context) =>
-                                              AppInstallPreviewBottomSheet(
-                                            packageName: task.packageName!,
-                                          ),
+                                          builder: (context) {
+                                            return AlertDialog(
+                                              backgroundColor: whiteColor,
+                                              surfaceTintColor: whiteColor,
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          10)),
+                                              title: const Text('Installed'),
+                                              content: Text(
+                                                'It seems already installed in your device to claim reward uninstall existing ${widget.appName} app and  Install again by this install option.',
+                                              ),
+                                              actions: [
+                                                TextButton(
+                                                  onPressed: () {
+                                                    Navigator.of(context)
+                                                        .pop(); // Close dialog
+                                                  },
+                                                  child: const Text('Ok'),
+                                                ),
+                                              ],
+                                            );
+                                          },
                                         );
+                                      } else {
+                                        if (task.packageName != null) {
+                                          showModalBottomSheet(
+                                            context: context,
+                                            isScrollControlled: true,
+                                            backgroundColor: Colors.white,
+                                            shape: const RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.vertical(
+                                                      top: Radius.circular(16)),
+                                            ),
+                                            builder: (context) =>
+                                                AppInstallPreviewBottomSheet(
+                                              packageName: task.packageName!,
+                                            ),
+                                          );
+                                        }
                                       }
                                     },
                                     style: ElevatedButton.styleFrom(
