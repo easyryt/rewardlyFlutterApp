@@ -1,17 +1,21 @@
 import 'dart:ui';
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:job_review/constant/color_const.dart';
 import 'package:job_review/controller/auth_controller.dart';
 import 'package:job_review/screens/bottom_navigation_bar.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
   final String? name;
   final String? email;
   final String? phone;
   final String? refer;
-  const LoginScreen({super.key, this.name, this.email, this.phone, this.refer});
+  final String? gender;
+  const LoginScreen(
+      {super.key, this.name, this.email, this.phone, this.refer, this.gender});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -22,6 +26,7 @@ class _LoginScreenState extends State<LoginScreen> {
   TextEditingController phoneController = TextEditingController();
   TextEditingController otpController = TextEditingController();
   bool isOtpSent = false;
+  String? fcmToken;
 
   @override
   void initState() {
@@ -30,7 +35,12 @@ class _LoginScreenState extends State<LoginScreen> {
       phoneController.text = widget.phone!;
       initFunction();
     }
-    setState(() {});
+    () async {
+      await setFcmToken();
+    }();
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   initFunction() async {
@@ -44,7 +54,7 @@ class _LoginScreenState extends State<LoginScreen> {
       Get.snackbar('Success', 'Otp Sent Successfully $sign');
       //Get.to(() => const LoginScreen());
     } else {
-      Get.snackbar('alert', 'otp sent failed');
+      //  Get.snackbar('alert', 'otp sent failed');
     }
   }
 
@@ -104,7 +114,6 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
 
-          // Glassmorphism Form Container
           Align(
             alignment: Alignment.bottomCenter,
             child: Padding(
@@ -118,7 +127,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 16, vertical: 12),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
+                      color: Colors.white.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(color: Colors.white.withOpacity(0.3)),
                     ),
@@ -136,13 +145,13 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ),
                         ),
-                        _buildTextField("Mobile Number", phoneController,
+                        _buildTextField("Mobile Number", phoneController, false,
                             isNumber: true),
                         if (isOtpSent) const SizedBox(height: 12),
                         // if (isOtpSent)
                         //   _buildTextField("Enter otp", otpController),
                         if (isOtpSent) ...[
-                          _buildTextField("Enter otp", otpController),
+                          _buildTextField("Enter otp", otpController, true),
                           const SizedBox(height: 2),
                           Align(
                             alignment: FractionalOffset.centerRight,
@@ -164,26 +173,45 @@ class _LoginScreenState extends State<LoginScreen> {
                         const SizedBox(height: 8),
                         Obx(() {
                           return (authController.isLoginLoading.value)
-                              ? Center(
+                              ? const Center(
                                   child: CircularProgressIndicator(),
                                 )
                               : (isOtpSent)
                                   ? InkWell(
                                       onTap: () async {
-                                        var token = await authController.login(
-                                          widget.name,
-                                          widget.email,
-                                          phoneController.text,
-                                          widget.refer,
-                                          otpController.text,
-                                        );
-                                        if (token != null && token != "") {
-                                          Get.offAll(() =>
-                                              const BottomNavigationBarScreen());
+                                        if (fcmToken == null) {
+                                          await setFcmToken()
+                                              .then((onValue) async {
+                                            var token =
+                                                await authController.login(
+                                              widget.name ?? "",
+                                              widget.email ?? "",
+                                              phoneController.text,
+                                              widget.gender ?? "Male",
+                                              fcmToken ?? "",
+                                              widget.refer,
+                                              otpController.text,
+                                            );
+                                            if (token != null && token != "") {
+                                              Get.offAll(() =>
+                                                  const BottomNavigationBarScreen());
+                                            } else {}
+                                          });
                                         } else {
-                                          Get.snackbar(
-                                              "error", "Something went wrong",
-                                              snackPosition: SnackPosition.TOP);
+                                          var token =
+                                              await authController.login(
+                                            widget.name ?? "",
+                                            widget.email ?? "",
+                                            phoneController.text,
+                                            widget.gender ?? "Male",
+                                            fcmToken ?? "",
+                                            widget.refer,
+                                            otpController.text,
+                                          );
+                                          if (token != null && token != "") {
+                                            Get.offAll(() =>
+                                                const BottomNavigationBarScreen());
+                                          } else {}
                                         }
                                       },
                                       child: Container(
@@ -245,7 +273,8 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget _buildTextField(String hint, controller, {bool isNumber = false}) {
+  Widget _buildTextField(String hint, controller, autofocus,
+      {bool isNumber = false}) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.15),
@@ -254,6 +283,7 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
       child: TextFormField(
         controller: controller,
+        autofocus: autofocus,
         style: const TextStyle(color: blackColor),
         maxLength: isNumber ? 10 : 6,
         cursorColor: blackColor,
@@ -268,5 +298,15 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> setFcmToken() async {
+    String? newFcmToken = await FirebaseMessaging.instance.getToken();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    await prefs.setString('fcmToken', newFcmToken ?? '');
+    setState(() {
+      fcmToken = prefs.getString('fcmToken') ?? '';
+    });
   }
 }

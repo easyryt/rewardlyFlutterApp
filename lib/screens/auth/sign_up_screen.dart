@@ -13,10 +13,14 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
+  final _formKey = GlobalKey<FormState>();
+
   TextEditingController nameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController phoneController = TextEditingController();
   TextEditingController referController = TextEditingController();
+
+  String selectedGender = "Male";
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -73,7 +77,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
             ),
           ),
 
-          // Glassmorphism Form Container
           Align(
             alignment: Alignment.bottomCenter,
             child: Padding(
@@ -84,71 +87,104 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
                   child: Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 10),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
+                      color: Colors.white.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(color: Colors.white.withOpacity(0.3)),
                     ),
                     child: SingleChildScrollView(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              "SignUp",
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 12),
-                          _buildTextField("Name", nameController),
-                          const SizedBox(height: 12),
-                          _buildTextField("Mobile Number", phoneController),
-                          const SizedBox(height: 12),
-                          _buildTextField("Reffer Code", referController),
-                          const SizedBox(height: 12),
-                          _buildTextField("Email", emailController),
-                          const SizedBox(height: 16),
-                          InkWell(
-                            onTap: () {
-                              Get.to(() => LoginScreen(
-                                    name: nameController.text,
-                                    email: emailController.text,
-                                    phone: phoneController.text,
-                                    refer: referController.text,
-                                  ));
-                            },
-                            child: Container(
-                              width: double.infinity,
-                              height: 46,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(25),
-                                gradient: const LinearGradient(
-                                  colors: [
-                                    Color(0xFF8BE68D),
-                                    Color(0xFF47C273)
-                                  ],
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                "SignUp",
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: blackColor,
                                 ),
                               ),
-                              child: const Center(
-                                child: Text(
-                                  "Sign Up",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
+                            ),
+                            const SizedBox(height: 10),
+                            _buildTextField("Name", nameController),
+                            const SizedBox(height: 10),
+                            _buildTextField("Mobile Number", phoneController,
+                                isPhone: true),
+                            const SizedBox(height: 10),
+                            _buildTextField("Email", emailController,
+                                isEmail: true),
+                            const SizedBox(height: 10),
+                            _buildTextField("Reffer Code", referController,
+                                isRequired: false),
+                            const SizedBox(height: 10),
+                            const Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                "  Gender *",
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    color: blackColor,
+                                    fontWeight: FontWeight.w500),
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                _genderOption("Male"),
+                                //  const SizedBox(width: 12),
+                                _genderOption("Female"),
+                                //  const SizedBox(width: 12),
+                                _genderOption("Other"),
+                              ],
+                            ),
+                            const SizedBox(height: 14),
+                            InkWell(
+                              onTap: () {
+                                if (_formKey.currentState!.validate()) {
+                                  Get.to(
+                                    () => LoginScreen(
+                                      name: nameController.text,
+                                      email: emailController.text,
+                                      phone: phoneController.text,
+                                      refer: referController.text,
+                                      gender: selectedGender,
+                                    ),
+                                  );
+                                }
+                              },
+                              child: Container(
+                                width: double.infinity,
+                                height: 44,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(25),
+                                  gradient: const LinearGradient(
+                                    colors: [
+                                      Color(0xFF8BE68D),
+                                      Color(0xFF47C273)
+                                    ],
+                                  ),
+                                ),
+                                child: const Center(
+                                  child: Text(
+                                    "Sign Up",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -161,7 +197,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
-  Widget _buildTextField(String hint, controller) {
+  Widget _buildTextField(String hint, controller,
+      {bool isEmail = false, bool isPhone = false, bool isRequired = true}) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.15),
@@ -172,6 +209,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
         controller: controller,
         style: const TextStyle(color: blackColor),
         cursorColor: blackColor,
+        keyboardType: isPhone
+            ? TextInputType.phone
+            : (isEmail ? TextInputType.emailAddress : TextInputType.text),
         decoration: InputDecoration(
           isDense: true,
           hintText: hint,
@@ -179,6 +219,55 @@ class _SignUpScreenState extends State<SignUpScreen> {
           contentPadding:
               const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
           border: InputBorder.none,
+        ),
+        validator: (value) {
+          if (isRequired && (value == null || value.trim().isEmpty)) {
+            return "$hint is required";
+          }
+          if (isEmail &&
+              value != null &&
+              value.trim().isNotEmpty &&
+              !RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value.trim())) {
+            return "Enter a valid email";
+          }
+          if (isPhone &&
+              value != null &&
+              value.trim().isNotEmpty &&
+              value.trim().length < 10) {
+            return "Enter a valid phone number";
+          }
+          return null;
+        },
+      ),
+    );
+  }
+
+  Widget _genderOption(String gender) {
+    bool isSelected = selectedGender == gender;
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          selectedGender = gender;
+        });
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(30),
+          color: isSelected
+              ? const Color(0xFF47C273)
+              : Colors.white.withOpacity(0.15),
+          border: Border.all(
+              color: isSelected
+                  ? const Color(0xFF47C273)
+                  : Colors.white.withOpacity(0.3)),
+        ),
+        child: Text(
+          gender,
+          style: TextStyle(
+            fontSize: 13,
+            color: isSelected ? Colors.white : blackColor,
+          ),
         ),
       ),
     );

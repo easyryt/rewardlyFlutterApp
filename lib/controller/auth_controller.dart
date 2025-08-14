@@ -1,9 +1,9 @@
 import 'package:dio/dio.dart' as Dio;
-import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:job_review/constant/constant_api_points.dart';
 import 'package:job_review/model/employee_auth_profile_model.dart';
+import 'package:job_review/screens/auth/sign_up_screen.dart';
 import 'package:job_review/services/global.dart';
 
 class AuthController extends GetxController {
@@ -12,7 +12,9 @@ class AuthController extends GetxController {
   var isUpdateProfileLoading = false.obs;
   var isLogoutProfileLoading = false.obs;
   var isEmailLoading = false.obs;
-  var nameUser = "".obs;
+  var nameUser = "User Name".obs;
+  var refCode = "".obs;
+  var wallet = "0".obs;
   var emailUser = "".obs;
   var emailVerified = false.obs;
   Rx<EmployeeAuthProfileModel?> employeeAuthProfileModel =
@@ -36,29 +38,33 @@ class AuthController extends GetxController {
         print("$otp ............................................");
         return otp;
       } else {
-        Get.snackbar('Error', 'Signup failed');
+        final responseData = response.data;
+
+        Get.snackbar("alert", "${responseData['message']}");
         return false;
       }
     } catch (e) {
-      Get.snackbar('Error', e.toString());
+      Get.snackbar('alert', e.toString());
       return false;
     } finally {
       isLoginLoading.value = false;
     }
   }
 
-  Future login(String? name, String? email, String mobile, String? refer,
-      String otp) async {
+  Future login(String name, String email, String mobile, String gender,
+      String fcm, String? refer, String otp) async {
     try {
       isLoginLoading.value = true;
       Dio.Response response = await Global.apiClient.postData(
         ConstantApiEndPoints.loginEndPoint,
         {
-          if (name != null && name != "") 'name': name,
-          if (email != null && email != "") 'email': email,
-          'phone': mobile,
+          if (name != "") 'name': name,
+          if (gender != "") 'gender': gender,
+          if (email != "") 'email': email,
+          if (mobile != "") 'phone': mobile,
           if (refer != null && refer != "") 'refCode': refer,
-          'otp': otp,
+          if (otp != "") 'otp': otp,
+          if (fcm != "") 'fcm': fcm,
         },
         null,
       );
@@ -68,11 +74,18 @@ class AuthController extends GetxController {
         Get.snackbar('Success', 'Logged in successfully');
         return response.data["data"];
       } else {
-        Get.snackbar('Error', 'Login failed');
+        final responseData = response.data;
+        if (responseData is Map<String, dynamic> &&
+            responseData['status'] == false &&
+            responseData['message'] == 'Sign Up first') {
+          Get.offAll(() => const SignUpScreen());
+        }
+
+        Get.snackbar("alert", "${responseData['message']}");
         return null;
       }
     } catch (e) {
-      Get.snackbar('Error', e.toString());
+      Get.snackbar("alert", "$e");
       return null;
     } finally {
       isLoginLoading.value = false;
@@ -92,6 +105,12 @@ class AuthController extends GetxController {
       if (empProfile["data"]["name"] != null) {
         nameUser.value = empProfile["data"]["name"];
       }
+      if (empProfile["data"]["refCode"] != null) {
+        refCode.value = empProfile["data"]["refCode"];
+      }
+      if (empProfile["data"]["wallet"] != null) {
+        wallet.value = "${empProfile["data"]["wallet"]}";
+      }
       if (empProfile["data"]["email"] != null) {
         emailUser.value = empProfile["data"]["email"];
       }
@@ -102,6 +121,9 @@ class AuthController extends GetxController {
 
       return empProfile;
     } else {
+      final responseData = response.data;
+
+      Get.snackbar("alert", "${responseData['message']}");
       return false;
     }
   }
@@ -121,12 +143,13 @@ class AuthController extends GetxController {
 
         return response.data;
       } else {
+        final responseData = response.data;
+
+        Get.snackbar("alert", "${responseData['message']}");
         return "";
       }
     } catch (e) {
-      if (kDebugMode) {
-        print("Update failed: $e");
-      }
+      Get.snackbar("alert", "$e");
       return "";
     } finally {
       isUpdateProfileLoading.value = false;
@@ -143,63 +166,66 @@ class AuthController extends GetxController {
       if (response.statusCode == 200) {
         return response.data;
       } else {
+        final responseData = response.data;
+
+        Get.snackbar("alert", "${responseData['message']}");
         return "";
       }
     } catch (e) {
-      if (kDebugMode) {
-        print("logout failed: $e");
-      }
+      Get.snackbar("alert", "$e");
       return "";
     } finally {
       isLogoutProfileLoading.value = false;
     }
   }
 
-  Future emailVerifyOtp(email) async {
-    try {
-      isEmailLoading.value = true;
+  // Future emailVerifyOtp(email) async {
+  //   try {
+  //     isEmailLoading.value = true;
+  //
+  //     Dio.Response response = await Global.apiClient.postData(
+  //         ConstantApiEndPoints.emailVerifyOtp, {"email": email}, null);
+  //     isEmailLoading.value = false;
+  //     if (response.statusCode == 200) {
+  //       return response.data;
+  //     } else {
+  //       Get.snackbar("alert", "$response");
+  //       return "";
+  //     }
+  //   } catch (e) {
+  //     // if (kDebugMode) {
+  //     //   print("otp email failed: $e");
+  //     // }
+  //     Get.snackbar("alert", "$e");
+  //     return "";
+  //   } finally {
+  //     isEmailLoading.value = false;
+  //   }
+  // }
 
-      Dio.Response response = await Global.apiClient.postData(
-          ConstantApiEndPoints.emailVerifyOtp, {"email": email}, null);
-      isEmailLoading.value = false;
-      if (response.statusCode == 200) {
-        return response.data;
-      } else {
-        return "";
-      }
-    } catch (e) {
-      if (kDebugMode) {
-        print("otp email failed: $e");
-      }
-      return "";
-    } finally {
-      isEmailLoading.value = false;
-    }
-  }
-
-  Future verifyEmailOtp(otp) async {
-    try {
-      isEmailLoading.value = true;
-
-      Dio.Response response = await Global.apiClient
-          .postData(ConstantApiEndPoints.verifyEmailOtp, {"otp": otp}, null);
-      isEmailLoading.value = false;
-      if (response.statusCode == 200) {
-        //  await cookieJar.deleteAll();
-        await getEmpProfile();
-        return response.data;
-      } else {
-        return "";
-      }
-    } catch (e) {
-      if (kDebugMode) {
-        print("otp verify failed: $e");
-      }
-      return "";
-    } finally {
-      isEmailLoading.value = false;
-    }
-  }
+  // Future verifyEmailOtp(otp) async {
+  //   try {
+  //     isEmailLoading.value = true;
+  //
+  //     Dio.Response response = await Global.apiClient
+  //         .postData(ConstantApiEndPoints.verifyEmailOtp, {"otp": otp}, null);
+  //     isEmailLoading.value = false;
+  //     if (response.statusCode == 200) {
+  //       //  await cookieJar.deleteAll();
+  //       await getEmpProfile();
+  //       return response.data;
+  //     } else {
+  //       return "";
+  //     }
+  //   } catch (e) {
+  //     if (kDebugMode) {
+  //       print("otp verify failed: $e");
+  //     }
+  //     return "";
+  //   } finally {
+  //     isEmailLoading.value = false;
+  //   }
+  // }
 
   String formatDateTime(String dateTimeString) {
     DateTime dateTime = DateTime.parse(dateTimeString).toLocal();

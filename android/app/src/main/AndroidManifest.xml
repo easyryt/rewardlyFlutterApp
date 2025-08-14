@@ -1,10 +1,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
 
 
     <application
-        android:label="Advertisement"
+        android:label="Pluse-Advi"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

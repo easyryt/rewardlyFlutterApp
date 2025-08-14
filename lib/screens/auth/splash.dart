@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cookie_jar/cookie_jar.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:job_review/constant/api_end_points.dart';
@@ -11,6 +12,7 @@ import 'package:job_review/screens/auth/main_login.dart';
 import 'package:job_review/screens/bottom_navigation_bar.dart';
 import 'package:job_review/services/global.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -45,7 +47,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
     if (tokenCookie.name.isNotEmpty && tokenCookie.value.isNotEmpty) {
       // ✅ Token cookie exists
-      Get.offAll(() => BottomNavigationBarScreen());
+      Get.offAll(() => const BottomNavigationBarScreen());
     } else {
       // ❌ Token not found, go to login
       Get.offAll(() => MainLogin());
@@ -56,6 +58,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     checkLoginStatus();
+    _requestNotificationPermissions();
     //  checkFirstSeen();
     super.initState();
   }
@@ -90,5 +93,18 @@ class _SplashScreenState extends State<SplashScreen> {
         // ),
       ),
     );
+  }
+
+  _requestNotificationPermissions() async {
+    PermissionStatus status = await Permission.notification.request();
+    if (status.isGranted) {
+      if (kDebugMode) {
+        print('Notification permissions granted');
+      }
+    } else {
+      if (kDebugMode) {
+        print('Notification permissions denied');
+      }
+    }
   }
 }

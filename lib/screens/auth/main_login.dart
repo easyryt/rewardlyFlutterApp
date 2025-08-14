@@ -79,7 +79,7 @@ class MainLogin extends StatelessWidget {
                         ),
                       ),
                       onPressed: () {
-                        Get.to(() => LoginScreen());
+                        Get.to(() => const LoginScreen());
                       },
                       child: const Text(
                         'Log In',

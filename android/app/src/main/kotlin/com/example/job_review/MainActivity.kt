@@ -1,4 +1,4 @@
-package com.example.job_review
+package com.pulseadv
 
 import android.content.Intent
 import android.net.Uri
@@ -34,7 +34,7 @@ class MainActivity: FlutterActivity() {
             startActivity(intent)
         } catch (e: Exception) {
             val intent = Intent(Intent.ACTION_VIEW).apply {
-                data = Uri.parse("$packageName")
+                data = Uri.parse("https://play.google.com/store/apps/details?id=$packageName")
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
             startActivity(intent)

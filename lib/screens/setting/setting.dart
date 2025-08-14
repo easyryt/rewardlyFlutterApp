@@ -6,6 +6,7 @@ import 'package:job_review/constant/color_const.dart';
 import 'package:job_review/controller/auth_controller.dart';
 import 'package:job_review/screens/auth/main_login.dart';
 import 'package:job_review/screens/auth/profile_screen.dart';
+import 'package:job_review/screens/setting/analytic_screen.dart';
 import 'package:path_provider/path_provider.dart';
 
 class SettingScreen extends StatefulWidget {
@@ -161,30 +162,43 @@ class _SettingScreenState extends State<SettingScreen> {
                           ),
                         );
                       }),
-                      Obx(() {
-                        return (authController.emailUser.value != "")
-                            ? Column(
-                                children: [
-                                  const SizedBox(height: 14),
-                                  InkWell(
-                                    onTap: () {
-                                      Get.to(() => const ProfileScreen());
-                                    },
-                                    child: _settingsTile(context,
-                                        title: authController.emailUser.value,
-                                        leading: Icon(
-                                          Icons.email,
-                                          size: 24,
-                                          color: blackColor.withOpacity(0.6),
-                                        ),
-                                        isMail: true,
-                                        isVerified:
-                                            authController.emailVerified.value),
-                                  ),
-                                ],
-                              )
-                            : SizedBox();
-                      }),
+                      // Obx(() {
+                      //   return (authController.emailUser.value != "")
+                      //       ? Column(
+                      //           children: [
+                      //             const SizedBox(height: 14),
+                      //             InkWell(
+                      //               onTap: () {
+                      //                 Get.to(() => const ProfileScreen());
+                      //               },
+                      //               child: _settingsTile(context,
+                      //                   title: authController.emailUser.value,
+                      //                   leading: Icon(
+                      //                     Icons.email,
+                      //                     size: 24,
+                      //                     color: blackColor.withOpacity(0.6),
+                      //                   ),
+                      //                   isMail: true,
+                      //                   isVerified:
+                      //                       authController.emailVerified.value),
+                      //             ),
+                      //           ],
+                      //         )
+                      //       : SizedBox();
+                      // }),
+                      const SizedBox(height: 14),
+                      InkWell(
+                        onTap: () {
+                          Get.to(() => const AnalyticsScreen());
+                        },
+                        child: _settingsTile(context,
+                            title: 'Analytic',
+                            leading: Icon(
+                              Icons.analytics_outlined,
+                              size: 24,
+                              color: blackColor.withOpacity(0.6),
+                            )),
+                      ),
                       const SizedBox(height: 14),
                       _settingsTile(context,
                           title: 'Privacy Policy',
@@ -301,58 +315,65 @@ class _SettingScreenState extends State<SettingScreen> {
         leading,
         const SizedBox(width: 12),
         Expanded(
-          child: Text(
-            title,
-            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                    fontSize: 13.5, fontWeight: FontWeight.w500),
+              ),
+              // isMail
+              //     ? isVerified
+              //         ? const Text(
+              //             "verified",
+              //             style: TextStyle(
+              //                 color: appColor,
+              //                 fontSize: 14,
+              //                 fontWeight: FontWeight.w600),
+              //           )
+              //         : Obx(() {
+              //             return authController.isEmailLoading.value
+              //                 ? const Center(
+              //                     child: CircularProgressIndicator(),
+              //                   )
+              //                 : InkWell(
+              //                     onTap: () async {
+              //                       await authController
+              //                           .emailVerifyOtp(title)
+              //                           .then((onValue) async {
+              //                         if (onValue != "") {
+              //                           final result = await showDialog(
+              //                             context: context,
+              //                             builder: (_) => OtpInputDialog(),
+              //                           );
+              //                           if (result != null && result != "") {
+              //                             await authController
+              //                                 .verifyEmailOtp(result)
+              //                                 .then((onValue) {
+              //                               if (onValue != "") {
+              //                                 Get.snackbar("wow",
+              //                                     "email verify successfully");
+              //                               }
+              //                             });
+              //                           }
+              //                         }
+              //                       });
+              //                     },
+              //                     child: const Text(
+              //                       " No verify - Tap Here",
+              //                       style: TextStyle(
+              //                           color: redColor,
+              //                           fontSize: 14,
+              //                           fontWeight: FontWeight.w500),
+              //                     ),
+              //                   );
+              //           })
+              //     : SizedBox()
+            ],
           ),
         ),
-        !isMail
-            ? const Icon(Icons.arrow_forward_ios, size: 14)
-            : isVerified
-                ? const Text(
-                    "verified",
-                    style: TextStyle(
-                        color: appColor,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600),
-                  )
-                : Obx(() {
-                    return authController.isEmailLoading.value
-                        ? const Center(
-                            child: CircularProgressIndicator(),
-                          )
-                        : InkWell(
-                            onTap: () async {
-                              await authController
-                                  .emailVerifyOtp(title)
-                                  .then((onValue) async {
-                                if (onValue != "") {
-                                  final result = await showDialog(
-                                    context: context,
-                                    builder: (_) => OtpInputDialog(),
-                                  );
-                                  if (result != null && result != "") {
-                                    await authController
-                                        .verifyEmailOtp(result)
-                                        .then((onValue) {
-                                      if (onValue != "") {
-                                        Get.snackbar(
-                                            "wow", "email verify successfully");
-                                      }
-                                    });
-                                  }
-                                }
-                              });
-                            },
-                            child: const Text(
-                              " No verify",
-                              style: TextStyle(
-                                  color: redColor,
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w500),
-                            ),
-                          );
-                  }),
+        const Icon(Icons.arrow_forward_ios, size: 14)
       ],
     );
   }

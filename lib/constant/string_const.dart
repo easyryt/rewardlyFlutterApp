@@ -23,7 +23,7 @@ const String privacyPolicy = ' Privacy Policy';
 const String termAndCondition = 'Term and Condition ';
 
 // home string
-const home = 'Home', refer = 'Refer', wallet = 'Wallet', setting = 'Settings';
+const home = 'Home', refer = 'Refer', wallet = 'History', setting = 'Settings';
 
 // homeScreen string
 

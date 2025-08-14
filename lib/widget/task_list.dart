@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:job_review/constant/color_const.dart';
 import 'package:job_review/controller/main_app_controller.dart';
-import 'package:job_review/screens/home/details_screen.dart';
 import 'package:job_review/screens/view_all.dart';
 import 'package:job_review/widget/task_card.dart';
 
@@ -15,6 +14,13 @@ class TaskList extends StatefulWidget {
 
 class _TaskListState extends State<TaskList> {
   MainApplicationController mainApplicationController = Get.find();
+
+  @override
+  void initState() {
+    super.initState();
+    // mainApplicationController.checkInstalledApps();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -69,23 +75,68 @@ class _TaskListState extends State<TaskList> {
           ],
         ),
         const SizedBox(height: 16),
-        ListView.separated(
-          padding: EdgeInsets.zero,
-          itemCount: mainApplicationController.allAppsList.length,
-          physics: const NeverScrollableScrollPhysics(),
-          shrinkWrap: true,
-          separatorBuilder: (_, __) => const SizedBox(height: 14),
-          itemBuilder: (context, index) {
-            var task = mainApplicationController.allAppsList[index];
-            return InkWell(
-                onTap: () {
-                  Get.to(() => DetailsScreen(
-                        appId: task.sId!,
-                      ));
-                },
-                child: TaskCard(task: task));
-          },
-        ),
+        Obx(() {
+          return ListView.separated(
+            padding: EdgeInsets.zero,
+            itemCount: mainApplicationController.allAppsList.length < 8
+                ? mainApplicationController.allAppsList.length
+                : 8,
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            separatorBuilder: (_, __) => const SizedBox(height: 14),
+            itemBuilder: (context, index) {
+              // var task = mainApplicationController.allAppsList[index];
+              // bool isInstalled =
+              //     mainApplicationController.installedStatus[task.packageName] ??
+              //         false;
+              return Obx(() {
+                var task = mainApplicationController.allAppsList[index];
+                bool isInstalled = mainApplicationController
+                        .installedStatus[task.packageName] ??
+                    false;
+
+                return InkWell(
+                    onTap: () {
+                      // if (task.sId != null && task.type != null) {
+                      //   Get.to(() => DetailsScreen(
+                      //         appId: task.sId!,
+                      //         type: task.type!,
+                      //       ));
+                      // }
+                      if (isInstalled && task.type == "cpi") {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              backgroundColor: whiteColor,
+                              surfaceTintColor: whiteColor,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10)),
+                              title: const Text('Installed'),
+                              content: Text(
+                                'It seems already installed in your device to claim reward uninstall existing ${task.name} app and  Install again by this install option.',
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop(); // Close dialog
+                                  },
+                                  child: const Text('Ok'),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      }
+                    },
+                    child: TaskCard(
+                      task: task,
+                      isInstalled: isInstalled,
+                    ));
+              });
+            },
+          );
+        })
       ],
     );
   }
